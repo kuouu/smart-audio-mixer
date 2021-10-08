@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="zLXXZf" name="SmartAudioMixer" projectType="guiapp" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
+              cppLanguageStandard="17">
+  <MAINGROUP id="wJf9zR" name="SmartAudioMixer">
+    <GROUP id="{DD516484-EF4C-A5DD-F9E9-C6CF179D6251}" name="Source">
+      <GROUP id="{6C93518F-2CA0-6E50-30BD-1685D8B61849}" name="UI">
+        <FILE id="byEQLO" name="EngineHelper.cpp" compile="1" resource="0"
+              file="Source/UI/EngineHelper.cpp"/>
+        <FILE id="SDVkPS" name="EngineHelper.h" compile="0" resource="0" file="Source/UI/EngineHelper.h"/>
+        <FILE id="aAu7tZ" name="ExtendedUIBehaviour.h" compile="0" resource="0"
+              file="Source/UI/ExtendedUIBehaviour.h"/>
+        <FILE id="UZpoTV" name="AudioClipComponent.cpp" compile="1" resource="0"
+              file="Source/UI/AudioClipComponent.cpp"/>
+        <FILE id="svC4xp" name="AudioClipComponent.h" compile="0" resource="0"
+              file="Source/UI/AudioClipComponent.h"/>
+        <FILE id="XiHt8L" name="ClipComponent.cpp" compile="1" resource="0"
+              file="Source/UI/ClipComponent.cpp"/>
+        <FILE id="hdFpid" name="ClipComponent.h" compile="0" resource="0" file="Source/UI/ClipComponent.h"/>
+        <FILE id="sbSuLQ" name="EditComponent.cpp" compile="1" resource="0"
+              file="Source/UI/EditComponent.cpp"/>
+        <FILE id="Va3fl7" name="EditComponent.h" compile="0" resource="0" file="Source/UI/EditComponent.h"/>
+        <FILE id="wNNimi" name="EditViewState.cpp" compile="1" resource="0"
+              file="Source/UI/EditViewState.cpp"/>
+        <FILE id="fucskt" name="EditViewState.h" compile="0" resource="0" file="Source/UI/EditViewState.h"/>
+        <FILE id="Ax5RPl" name="MainComponent.cpp" compile="1" resource="0"
+              file="Source/UI/MainComponent.cpp"/>
+        <FILE id="ClbjKB" name="MainComponent.h" compile="0" resource="0" file="Source/UI/MainComponent.h"/>
+        <FILE id="kBpiMC" name="MidiClipComponent.cpp" compile="1" resource="0"
+              file="Source/UI/MidiClipComponent.cpp"/>
+        <FILE id="DpJcGQ" name="MidiClipComponent.h" compile="0" resource="0"
+              file="Source/UI/MidiClipComponent.h"/>
+        <FILE id="Xyw3oK" name="PlayheadComponent.cpp" compile="1" resource="0"
+              file="Source/UI/PlayheadComponent.cpp"/>
+        <FILE id="EgiMak" name="PlayheadComponent.h" compile="0" resource="0"
+              file="Source/UI/PlayheadComponent.h"/>
+        <FILE id="po3Day" name="PluginComponent.cpp" compile="1" resource="0"
+              file="Source/UI/PluginComponent.cpp"/>
+        <FILE id="h0XZyL" name="PluginComponent.h" compile="0" resource="0"
+              file="Source/UI/PluginComponent.h"/>
+        <FILE id="rpCYyo" name="PluginEditor.h" compile="0" resource="0" file="Source/UI/PluginEditor.h"/>
+        <FILE id="qQtqbr" name="PluginWindow.cpp" compile="1" resource="0"
+              file="Source/UI/PluginWindow.cpp"/>
+        <FILE id="FBNGcu" name="PluginWindow.h" compile="0" resource="0" file="Source/UI/PluginWindow.h"/>
+        <FILE id="VFUvqp" name="RecordingClipComponent.cpp" compile="1" resource="0"
+              file="Source/UI/RecordingClipComponent.cpp"/>
+        <FILE id="wGJ5bO" name="RecordingClipComponent.h" compile="0" resource="0"
+              file="Source/UI/RecordingClipComponent.h"/>
+        <FILE id="pGbcJA" name="TrackComponent.cpp" compile="1" resource="0"
+              file="Source/UI/TrackComponent.cpp"/>
+        <FILE id="wdcPVu" name="TrackComponent.h" compile="0" resource="0"
+              file="Source/UI/TrackComponent.h"/>
+        <FILE id="PI6KQI" name="TrackFooterComponent.cpp" compile="1" resource="0"
+              file="Source/UI/TrackFooterComponent.cpp"/>
+        <FILE id="YvD8ac" name="TrackFooterComponent.h" compile="0" resource="0"
+              file="Source/UI/TrackFooterComponent.h"/>
+        <FILE id="oemSv1" name="TrackHeaderComponent.cpp" compile="1" resource="0"
+              file="Source/UI/TrackHeaderComponent.cpp"/>
+        <FILE id="AROREs" name="TrackHeaderComponent.h" compile="0" resource="0"
+              file="Source/UI/TrackHeaderComponent.h"/>
+        <FILE id="yadTSZ" name="AudioProcessorEditorContentComp.h" compile="0"
+              resource="0" file="Source/UI/AudioProcessorEditorContentComp.h"/>
+        <FILE id="jNn0IL" name="AudioProcessorEditorContentComp.cpp" compile="1"
+              resource="0" file="Source/UI/AudioProcessorEditorContentComp.cpp"/>
+      </GROUP>
+      <FILE id="Cwc7cR" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="ixk17W" name="Utilities.h" compile="0" resource="0" file="Source/Utilities.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="SmartAudioMixer"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="SmartAudioMixer"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_analytics" path="../../tracktion_engine/modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../tracktion_engine/modules/juce/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../tracktion_engine/modules/juce/modules"/>
+        <MODULEPATH id="tracktion_engine" path="../../tracktion_engine/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_analytics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="tracktion_engine" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+  </MODULES>
+</JUCERPROJECT>
