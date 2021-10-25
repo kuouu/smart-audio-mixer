@@ -23,10 +23,12 @@ public:
     
     void paint (Graphics& g) override;
     void mouseDown (const MouseEvent& e) override;
-    
+    void mouseDrag (const MouseEvent& e) override;
+    void mouseUp (const MouseEvent& e) override;
     te::Clip& getClip() { return *clip; }
     
 protected:
     EditViewState& editViewState;
     te::Clip::Ptr clip;
+    double posX;
 };
