@@ -13,6 +13,7 @@
 #include "TrackComponent.h"
 #include "TrackFooterComponent.h"
 #include "TrackHeaderComponent.h"
+#include "TimeBar.h"
 
 namespace te = tracktion_engine;
 
@@ -26,6 +27,7 @@ public:
     ~EditComponent() override;
     
     EditViewState& getEditViewState()   { return editViewState; }
+    void mouseMagnify (const MouseEvent&, float scaleFactor) override;
     
 private:
     void valueTreeChanged() override {}
@@ -51,6 +53,7 @@ private:
     OwnedArray<TrackComponent> tracks;
     OwnedArray<TrackHeaderComponent> headers;
     OwnedArray<TrackFooterComponent> footers;
+    TimeBar timebar {edit, editViewState};
     
     bool updateTracks = false, updateZoom = false;
 };
