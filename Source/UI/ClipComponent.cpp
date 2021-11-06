@@ -45,6 +45,5 @@ void ClipComponent::mouseDrag (const MouseEvent& e)
     auto len = getWidth();
     auto distance = e.getDistanceFromDragStartX();
     auto newX = posX + editViewState.xToTime(distance, len) * 0.2;
-    std::cout << posX << " + " << distance / len << " = " << newX << std::endl;
     clip.get()->setStart(newX, 0, 1);
 }
