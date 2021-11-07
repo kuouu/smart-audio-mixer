@@ -18,13 +18,17 @@ PlayheadComponent::PlayheadComponent (te::Edit& e , EditViewState& evs)
 
 void PlayheadComponent::paint (Graphics& g)
 {
+    double scrollX = editViewState.scrollX.get();
+    int offset = editViewState.timeToX(scrollX, getWidth());
     g.setColour (Colours::yellow);
-    g.drawRect (xPosition, 0, 2, getHeight());
+    g.drawRect (xPosition + offset, 0, 2, getHeight());
 }
 
 bool PlayheadComponent::hitTest (int x, int)
 {
-    if (std::abs (x - xPosition) <= 3)
+    double scrollX = editViewState.scrollX.get();
+    int offset = editViewState.timeToX(scrollX, getWidth());
+    if (std::abs (x - (xPosition + offset)) <= 3)
         return true;
     
     return false;
@@ -42,8 +46,9 @@ void PlayheadComponent::mouseUp (const MouseEvent&)
 
 void PlayheadComponent::mouseDrag (const MouseEvent& e)
 {
+    double scrollX = editViewState.scrollX.get();
     double t = editViewState.xToTime (e.x, getWidth());
-    edit.getTransport().setCurrentPosition (t);
+    edit.getTransport().setCurrentPosition (t - scrollX);
     timerCallback();
 }
 
@@ -62,4 +67,5 @@ void PlayheadComponent::timerCallback()
         repaint (jmin (newX, xPosition) - 1, 0, jmax (newX, xPosition) - jmin (newX, xPosition) + 3, getHeight());
         xPosition = newX;
     }
+    repaint();
 }

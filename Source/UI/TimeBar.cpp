@@ -36,9 +36,12 @@ void TimeBar::drawLabels (Graphics& g)
 {
     const int headerWidth = editViewState.showHeaders ? 150 : 0;
     const int footerWidth = editViewState.showFooters ? 150 : 0;
-    for (int xLabel = headerWidth
+    const int interval = editViewState.timeToX(1, getWidth());
+    double scrollX = editViewState.scrollX.get();
+    double offset = editViewState.timeToX(scrollX, getWidth());
+    for (int xLabel = headerWidth + offset
          ; xLabel < getWidth() - footerWidth
-         ; xLabel += editViewState.timeToX(1, getWidth())){
+         ; xLabel += interval){
         g.setColour (Colours::white);
         g.drawRect (xLabel, 30, 1, 20);
     }

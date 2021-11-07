@@ -28,6 +28,7 @@ public:
     
     EditViewState& getEditViewState()   { return editViewState; }
     void mouseMagnify (const MouseEvent&, float scaleFactor) override;
+    void mouseWheelMove(const MouseEvent&, const MouseWheelDetails &) override;
     
 private:
     void valueTreeChanged() override {}

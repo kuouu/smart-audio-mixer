@@ -25,6 +25,7 @@ namespace IDs
     DECLARE_ID (viewX1)
     DECLARE_ID (viewX2)
     DECLARE_ID (viewY)
+    DECLARE_ID (scrollX)
     DECLARE_ID (drawWaveforms)
     DECLARE_ID (showHeaders)
     DECLARE_ID (showFooters)
@@ -56,6 +57,7 @@ public:
         viewX1.referTo (state, IDs::viewX1, um, 0);
         viewX2.referTo (state, IDs::viewX2, um, 60);
         viewY.referTo (state, IDs::viewY, um, 0);
+        scrollX.referTo (state, IDs::scrollX, um, 0.0);
     }
     
     int timeToX (double time, int width) const
@@ -74,13 +76,20 @@ public:
         return ts.beatsToTime (b);
     }
     
+    void setScrollX(double offset)
+    {
+        scrollX = scrollX + offset;
+        if(scrollX > 0.0)
+            scrollX = 0.0;
+    }
+
     te::Edit& edit;
     te::SelectionManager& selectionManager;
     
     CachedValue<bool> showGlobalTrack, showMarkerTrack, showChordTrack, showArrangerTrack,
                       drawWaveforms, showHeaders, showFooters, showMidiDevices, showWaveDevices;
     
-    CachedValue<double> viewX1, viewX2, viewY;
+    CachedValue<double> viewX1, viewX2, viewY, scrollX;
     
     ValueTree state;
 };

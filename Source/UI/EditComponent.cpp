@@ -167,3 +167,14 @@ void EditComponent::mouseMagnify (const MouseEvent& e, float scaleFactor)
     editViewState.viewX2 = editViewState.viewX2.get() * (1 / scaleFactor);
     timebar.repaint();
 }
+
+void EditComponent::mouseWheelMove (const MouseEvent& e, const MouseWheelDetails& wheel)
+{
+    editViewState.setScrollX(wheel.deltaX * 5);
+    // tracks
+    for (auto t : tracks) {
+        t->resized();
+    }
+    // playhead
+    playhead.repaint();
+}
