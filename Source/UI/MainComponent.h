@@ -8,48 +8,53 @@
 
 namespace te = tracktion_engine;
 
-class MainComponent  : public Component,
-                       private ChangeListener
+class MainComponent : public Component,
+	private ChangeListener
 {
 public:
-        //==============================================================================
-    MainComponent();
-    ~MainComponent() override;
+	//==============================================================================
+	MainComponent();
+	~MainComponent() override;
 
-    //==============================================================================
-    void paint (juce::Graphics&) override;
-    void resized() override;
+	//==============================================================================
+	void paint(juce::Graphics&) override;
+	void resized() override;
 
 private:
-    te::Engine engine { ProjectInfo::projectName, std::make_unique<ExtendedUIBehaviour>(), nullptr };
-    te::SelectionManager selectionManager { engine };
-    std::unique_ptr<te::Edit> edit;
-    std::unique_ptr<EditComponent> editComponent;
+	te::Engine engine{ ProjectInfo::projectName, std::make_unique<ExtendedUIBehaviour>(), nullptr };
+	te::SelectionManager selectionManager{ engine };
+	std::unique_ptr<te::Edit> edit;
+	std::unique_ptr<EditComponent> editComponent;
 
-    juce::TextButton settingsButton { "Settings" },
-                     pluginsButton { "Plugins" },
-                     newEditButton { "New" },
-                     playPauseButton { "Play" },
-                     showEditButton { "Show Edit" },
-                     newTrackButton { "New Track" },
-                     newAudioClipButton {"New Audio Clip"},
-                     deleteButton { "Delete" };
-    
-    juce::Label editNameLabel { "No Edit Loaded" };
-    
-    juce::ToggleButton showWaveformButton { "Show Waveforms" };
+	juce::UndoManager undoManager;
 
-    void setupButtons();
-    
-    void updatePlayButtonText();
-    
-    void createOrLoadEdit (File editFile = {});
-    
-    void enableAllInputs();
-    
-    void changeListenerCallback (ChangeBroadcaster* source) override;
-    
-    void setFile (const File&);
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
+	juce::TextButton settingsButton{ "Settings" },
+		saveButton{ "Save" },
+		undoButton{ "Undo" },
+		redoButton{ "Redo" },
+		pluginsButton{ "Plugins" },
+		newTrackButton{ "New Track" },
+		newAudioClipButton{ "New Audio Clip" },
+		playPauseButton{ "Play" },
+		newEditButton{ "New Edit" },
+		showEditButton{ "Show Edit" },
+		deleteButton{ "Delete" };
+
+	juce::Label editNameLabel{ "No Edit Loaded" };
+
+	juce::ToggleButton showWaveformButton{ "Show Waveforms" };
+
+	void setupButtons();
+
+	void updatePlayButtonText();
+
+	void createOrLoadEdit(File editFile = {});
+
+	void enableAllInputs();
+
+	void changeListenerCallback(ChangeBroadcaster* source) override;
+
+	void setFile(const File&);
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };
