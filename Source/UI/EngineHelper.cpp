@@ -50,13 +50,13 @@ namespace EngineHelpers
     tracktion_engine::AudioTrack* getOrInsertAudioTrackAt(tracktion_engine::Edit& edit, int index)
     {
         edit.ensureNumberOfAudioTracks(index + 1);
-        return tracktion_engine::getAudioTracks(edit)[index];
+        return tracktion_engine::getAudioTracks(edit)[index-1];
     }
 
-    tracktion_engine::WaveAudioClip::Ptr loadAudioFileAsClip(tracktion_engine::Edit& edit, const juce::File& file)
+    tracktion_engine::WaveAudioClip::Ptr loadAudioFileAsClip(tracktion_engine::Edit& edit, const juce::File& file, int n)
     {
         // Find the first track and delete all clips from it
-        if (auto track = getOrInsertAudioTrackAt(edit, 0))
+        if (auto track = getOrInsertAudioTrackAt(edit, n))
         {
             removeAllClips(*track);
 

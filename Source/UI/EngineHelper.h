@@ -18,7 +18,7 @@ namespace EngineHelpers
     void browseForAudioFile(tracktion_engine::Engine& engine, std::function<void(const juce::File&)> fileChosenCallback);
     void removeAllClips(tracktion_engine::AudioTrack& track);
     tracktion_engine::AudioTrack* getOrInsertAudioTrackAt(tracktion_engine::Edit& edit, int index);
-    tracktion_engine::WaveAudioClip::Ptr loadAudioFileAsClip(tracktion_engine::Edit& edit, const juce::File& file);
+    tracktion_engine::WaveAudioClip::Ptr loadAudioFileAsClip(tracktion_engine::Edit& edit, const juce::File& file, int);
     template<typename ClipType> typename ClipType::Ptr loopAroundClip(ClipType& clip);
     void stop(tracktion_engine::Edit& edit); ///< stops the engine and rewind to start
     void togglePlay(tracktion_engine::Edit& edit); ///< Play or pause the engine

@@ -263,15 +263,13 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster* source)
 
 void MainComponent::setFile(const File& f)
 {
-	if (auto clip = EngineHelpers::loadAudioFileAsClip(*edit, f))
+    auto sel = selectionManager.getSelectedObject(0);
+    auto track = dynamic_cast<te::AudioTrack*> (sel);
+    auto trackNum = track ? track->getAudioTrackNumber() : 0;
+	if (auto clip = EngineHelpers::loadAudioFileAsClip(*edit, f, trackNum))
 	{
 		clip->setAutoTempo(false);
 		clip->setAutoPitch(false);
 		clip->setTimeStretchMode(te::TimeStretcher::defaultMode);
-		auto sel = selectionManager.getSelectedObject(0);
-		if (auto track = dynamic_cast<te::AudioTrack*> (sel))
-		{
-			track->addClip(clip);
-		}
 	}
 }
