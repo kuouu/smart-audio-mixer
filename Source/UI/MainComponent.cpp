@@ -42,14 +42,14 @@ MainComponent::MainComponent()
 
 	deleteButton.setEnabled(false);
 
-	auto d = File::getSpecialLocation(File::tempDirectory).getChildFile("PluginDemo");
+	auto d = File::getSpecialLocation(File::userDesktopDirectory).getChildFile("saved");
 	d.createDirectory();
 
 	auto f = Helpers::findRecentEdit(d);
 	if (f.existsAsFile())
 		createOrLoadEdit(f);
 	else
-		createOrLoadEdit(d.getNonexistentChildFile("Test", ".wav", false));
+		createOrLoadEdit(d.getNonexistentChildFile("Test", ".tracktionedit", false));
 
 	selectionManager.addChangeListener(this);
 
@@ -103,8 +103,24 @@ void  MainComponent::setupButtons()
 {
 	saveButton.onClick = [this]
 	{
-		te::EditFileOperations(*edit).save(true, true, false);
-		engine.getTemporaryFileManager().getTempDirectory().deleteRecursively();
+        FileChooser chooser{ "enter file name to render..."
+            , engine.getPropertyStorage().getDefaultLoadSaveDirectory("MyDir")
+            , engine.getAudioFileFormatManager().readFormatManager.getWildcardForAllFormats()};
+        if (chooser.browseForFileToSave(true))
+        {
+            File file = chooser.getResult();
+            BigInteger tracksToDo;
+            int trackID = 0;
+            for (const auto& t : te::getAllTracks(*edit))
+                tracksToDo.setBit(trackID++);
+
+            te::EditTimeRange edrange{ 0.0, edit->getLength() };
+
+            if (te::Renderer::renderToFile("My Render Task", file, *edit, edrange, tracksToDo, true, {}, false))
+                DBG("render successed!!");
+            else
+                DBG("render failed...");
+        }
 	};
 	undoButton.onClick = [this]
 	{
@@ -162,7 +178,7 @@ void MainComponent::createOrLoadEdit(File editFile)
 {
 	if (editFile == File())
 	{
-		FileChooser fc("New Edit", File::getSpecialLocation(File::userDocumentsDirectory), "*.wav");
+		FileChooser fc("New Edit", File::getSpecialLocation(File::userDesktopDirectory), "*.tracktionedit");
 		if (fc.browseForFileToSave(true))
 			editFile = fc.getResult();
 		else
