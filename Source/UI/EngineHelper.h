@@ -16,6 +16,7 @@ namespace EngineHelpers
     tracktion_engine::Project::Ptr createTempProject(tracktion_engine::Engine& engine);
     void showAudioDeviceSettings(tracktion_engine::Engine& engine); ///< Show the the audio device settings for selecting a new device model + hardware
     void browseForAudioFile(tracktion_engine::Engine& engine, std::function<void(const juce::File&)> fileChosenCallback);
+    void browseForEditFile(tracktion_engine::Engine& engine, std::function<void(const juce::File&)> fileChosenCallback);
     void removeAllClips(tracktion_engine::AudioTrack& track);
     tracktion_engine::AudioTrack* getOrInsertAudioTrackAt(tracktion_engine::Edit& edit, int index);
     tracktion_engine::WaveAudioClip::Ptr loadAudioFileAsClip(tracktion_engine::Edit& edit, const juce::File& file, int);

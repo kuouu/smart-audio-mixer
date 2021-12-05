@@ -39,6 +39,24 @@ namespace EngineHelpers
         });
     }
 
+    void browseForEditFile(tracktion_engine::Engine& engine, std::function<void(const juce::File&)> fileChosenCallback)
+    {
+        auto fc = std::make_shared<juce::FileChooser>("Please select an .tracktionedit file to load...",
+            File::getSpecialLocation (File::userDesktopDirectory),
+            "*.tracktionedit");
+
+        fc->launchAsync(juce::FileBrowserComponent::openMode + juce::FileBrowserComponent::canSelectFiles,
+            [fc, &engine, callback = std::move(fileChosenCallback)](const juce::FileChooser&)
+        {
+            const auto f = fc->getResult();
+
+            if (f.existsAsFile())
+                engine.getPropertyStorage().setDefaultLoadSaveDirectory("pitchAndTimeExample", f.getParentDirectory());
+
+            callback(f);
+        });
+    }
+
     void removeAllClips(tracktion_engine::AudioTrack& track)
     {
         auto clips = track.getClips();

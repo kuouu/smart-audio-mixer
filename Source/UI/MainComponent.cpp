@@ -74,7 +74,9 @@ PopupMenu MainComponent::getMenuForIndex (int menuIndex, const String& /*menuNam
 
     if (menuIndex == 0)
     {
-        menu.addItem ("Save", [this]{ saveAsWav(); });
+        menu.addItem ("Save As", [this]{ saveAsWav(); });
+        menu.addItem ("Save Project", [this]{ /* TODO */ });
+        menu.addSeparator();
         menu.addItem ("New Track", [this]{
             edit->ensureNumberOfAudioTracks(getAudioTracks(*edit).size() + 1);
         });
@@ -82,11 +84,16 @@ PopupMenu MainComponent::getMenuForIndex (int menuIndex, const String& /*menuNam
             EngineHelpers::browseForAudioFile(engine, [this](const File& f) { setFile(f); });
         });
         menu.addItem ("New Project", [&]{ newEdit(); });
+        menu.addSeparator();
         menu.addItem ("Show Project Path", [this]{
             auto d = File::getSpecialLocation(File::userDesktopDirectory).getChildFile("saved");
 	        d.createDirectory();
             auto f = Helpers::findRecentEdit(d);
             if (f.existsAsFile()) f.revealToUser();
+        });
+        menu.addSeparator();
+        menu.addItem ("Import Project", [this]{
+            EngineHelpers::browseForEditFile(engine, [this](const File& f) { createOrLoadEdit(f); });
         });
     }
     else if (menuIndex == 1)
@@ -166,6 +173,7 @@ void MainComponent::createOrLoadEdit(File editFile)
 	editComponent->getEditViewState().showWaveDevices = true;
 
 	addAndMakeVisible(*editComponent);
+    resized();
 }
 
 void MainComponent::enableAllInputs()
@@ -246,7 +254,7 @@ void MainComponent::deleteSelectedObj ()
 void MainComponent::saveAsWav ()
 {
     FileChooser chooser{ "enter file name to render..."
-        , engine.getPropertyStorage().getDefaultLoadSaveDirectory("MyDir")
+        , File::getSpecialLocation(File::userDesktopDirectory)
         , engine.getAudioFileFormatManager().readFormatManager.getWildcardForAllFormats()};
     if (chooser.browseForFileToSave(true))
     {
