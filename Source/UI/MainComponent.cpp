@@ -75,7 +75,7 @@ PopupMenu MainComponent::getMenuForIndex (int menuIndex, const String& /*menuNam
     if (menuIndex == 0)
     {
         menu.addItem ("Save As", [this]{ saveAsWav(); });
-        menu.addItem ("Save Project", [this]{ /* TODO */ });
+        menu.addItem ("Save Project", [this]{ te::EditFileOperations(*edit).save(true, true, false); });
         menu.addSeparator();
         menu.addItem ("New Track", [this]{
             edit->ensureNumberOfAudioTracks(getAudioTracks(*edit).size() + 1);
