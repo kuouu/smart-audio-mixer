@@ -3,42 +3,13 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-	settingsButton.onClick = [this] { EngineHelpers::showAudioDeviceSettings(engine); };
-	pluginsButton.onClick = [this]
-	{
-		DialogWindow::LaunchOptions o;
-		o.dialogTitle = TRANS("Plugins");
-		o.dialogBackgroundColour = Colours::black;
-		o.escapeKeyTriggersCloseButton = true;
-		o.useNativeTitleBar = true;
-		o.resizable = true;
-		o.useBottomRightCornerResizer = true;
-
-		auto v = new PluginListComponent(engine.getPluginManager().pluginFormatManager,
-			engine.getPluginManager().knownPluginList,
-			engine.getTemporaryFileManager().getTempFile("PluginScanDeadMansPedal"),
-			te::getApplicationSettings());
-		v->setSize(800, 600);
-		o.content.setOwned(v);
-		o.launchAsync();
-	};
-	newEditButton.onClick = [&]
-	{
-		createOrLoadEdit();
-
-		auto xmlName = File::getSpecialLocation(File::userDesktopDirectory).getFullPathName() + "\\edit.xml";
-		//DBG(xmlName);
-		File xmlFile(xmlName);
-
-		auto state = edit->state;
-		std::unique_ptr<juce::XmlElement> xml(state.createXml());
-		xml->writeTo(xmlFile);
-	};
+    #if JUCE_MAC
+        MenuBarModel::setMacMainMenu (this);
+    #endif
 
 	updatePlayButtonText();
 	editNameLabel.setJustificationType(Justification::centred);
-	Helpers::addAndMakeVisible(*this, { &settingsButton, &saveButton, &undoButton, &redoButton, &pluginsButton, &newTrackButton, &newAudioClipButton, &playPauseButton,
-										 &newEditButton, &showEditButton, &deleteButton, &editNameLabel, &showWaveformButton });
+	Helpers::addAndMakeVisible(*this, { &playPauseButton, &deleteButton, &editNameLabel, &showWaveformButton });
 
 	deleteButton.setEnabled(false);
 
@@ -62,6 +33,9 @@ MainComponent::~MainComponent()
 {
 	te::EditFileOperations(*edit).save(true, true, false);
 	engine.getTemporaryFileManager().getTempDirectory().deleteRecursively();
+    #if JUCE_MAC
+        MenuBarModel::setMacMainMenu (nullptr);
+    #endif
 }
 
 //==============================================================================
@@ -74,90 +48,72 @@ void MainComponent::resized()
 {
 
 	auto r = getLocalBounds();
-	int w = r.getWidth() / 12;
-	auto topR = r.removeFromTop(32);
+	int w = r.getWidth() / 3;
+	auto topR = r.removeFromTop(40);
+    juce::FlexBox fb;
+    fb.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
+    fb.alignContent = juce::FlexBox::AlignContent::center;  
+    fb.items.addArray ( { 
+        juce::FlexItem(deleteButton).withMinWidth (50.0f).withMinHeight (30.0f), 
+        juce::FlexItem(playPauseButton).withMinWidth (50.0f).withMinHeight (30.0f), 
+        juce::FlexItem(showWaveformButton).withMinWidth (50.0f).withMinHeight (30.0f), 
+    } );
+    fb.performLayout(topR.reduced(2));
 
-
-	settingsButton.setBounds(topR.removeFromLeft(w).reduced(2));
-	saveButton.setBounds(topR.removeFromLeft(w).reduced(2));
-	undoButton.setBounds(topR.removeFromLeft(w).reduced(2));
-	redoButton.setBounds(topR.removeFromLeft(w).reduced(2));
-	pluginsButton.setBounds(topR.removeFromLeft(w).reduced(2));
-	newTrackButton.setBounds(topR.removeFromLeft(w).reduced(2));
-	newAudioClipButton.setBounds(topR.removeFromLeft(w).reduced(2));
-	playPauseButton.setBounds(topR.removeFromLeft(w).reduced(2));
-	newEditButton.setBounds(topR.removeFromLeft(w).reduced(2));
-	showEditButton.setBounds(topR.removeFromLeft(w).reduced(2));
-	deleteButton.setBounds(topR.removeFromLeft(w).reduced(2));
-	showWaveformButton.setBounds(topR.removeFromLeft(w).reduced(2));
 	topR = r.removeFromTop(32);
 	editNameLabel.setBounds(topR);
-
-
 
 	if (editComponent != nullptr)
 		editComponent->setBounds(r);
 }
 
+PopupMenu MainComponent::getMenuForIndex (int menuIndex, const String& /*menuName*/)
+{
+    PopupMenu menu;
+    auto lambda = []() { std::cout << "Hello, Lambda" << std::endl; };
+
+    if (menuIndex == 0)
+    {
+        menu.addItem ("Save", [this]{ saveAsWav(); });
+        menu.addItem ("New Track", [this]{
+            edit->ensureNumberOfAudioTracks(getAudioTracks(*edit).size() + 1);
+        });
+        menu.addItem ("New Audio Clip", [this]{
+            EngineHelpers::browseForAudioFile(engine, [this](const File& f) { setFile(f); });
+        });
+        menu.addItem ("New Project", [&]{ newEdit(); });
+        menu.addItem ("Show Project Path", [this]{
+            auto d = File::getSpecialLocation(File::userDesktopDirectory).getChildFile("saved");
+	        d.createDirectory();
+            auto f = Helpers::findRecentEdit(d);
+            if (f.existsAsFile()) f.revealToUser();
+        });
+    }
+    else if (menuIndex == 1)
+    {
+        menu.addItem ("Undo", [this]{ edit->undo(); });
+        menu.addItem ("Redo", [this]{ edit->redo(); });
+    }
+    else if (menuIndex == 2)
+    {
+        menu.addItem ("Settings", [this] { 
+            EngineHelpers::showAudioDeviceSettings(engine); 
+        });
+        menu.addItem ("Plugins", [this]{ showPlugins(); });
+    }
+
+    return menu;
+}
+
 void  MainComponent::setupButtons()
 {
-	saveButton.onClick = [this]
-	{
-        FileChooser chooser{ "enter file name to render..."
-            , engine.getPropertyStorage().getDefaultLoadSaveDirectory("MyDir")
-            , engine.getAudioFileFormatManager().readFormatManager.getWildcardForAllFormats()};
-        if (chooser.browseForFileToSave(true))
-        {
-            File file = chooser.getResult();
-            BigInteger tracksToDo;
-            int trackID = 0;
-            for (const auto& t : te::getAllTracks(*edit))
-                tracksToDo.setBit(trackID++);
-
-            te::EditTimeRange edrange{ 0.0, edit->getLength() };
-
-            if (te::Renderer::renderToFile("My Render Task", file, *edit, edrange, tracksToDo, true, {}, false))
-                DBG("render successed!!");
-            else
-                DBG("render failed...");
-        }
-	};
-	undoButton.onClick = [this]
-	{
-		edit->undo();
-	};
-	redoButton.onClick = [this]
-	{
-		edit->redo();
-	};
 	playPauseButton.onClick = [this]
 	{
 		EngineHelpers::togglePlay(*edit);
 	};
-	newTrackButton.onClick = [this]
-	{
-		edit->ensureNumberOfAudioTracks(getAudioTracks(*edit).size() + 1);
-	};
-	newAudioClipButton.onClick = [this]
-	{
-		EngineHelpers::browseForAudioFile(engine, [this](const File& f) { setFile(f); });
-	};
 	deleteButton.onClick = [this]
 	{
-		auto sel = selectionManager.getSelectedObject(0);
-		if (auto clip = dynamic_cast<te::Clip*> (sel))
-		{
-			clip->removeFromParentTrack();
-		}
-		else if (auto track = dynamic_cast<te::Track*> (sel))
-		{
-			if (!(track->isMarkerTrack() || track->isTempoTrack() || track->isChordTrack()))
-				edit->deleteTrack(track);
-		}
-		else if (auto plugin = dynamic_cast<te::Plugin*> (sel))
-		{
-			plugin->deleteFromParent();
-		}
+		deleteSelectedObj();
 	};
 	showWaveformButton.onClick = [this]
 	{
@@ -199,11 +155,6 @@ void MainComponent::createOrLoadEdit(File editFile)
 	transport.addChangeListener(this);
 
 	editNameLabel.setText(editFile.getFileNameWithoutExtension(), dontSendNotification);
-	showEditButton.onClick = [this, editFile]
-	{
-		te::EditFileOperations(*edit).save(true, true, false);
-		editFile.revealToUser();
-	};
 
 	te::EditFileOperations(*edit).save(true, true, false);
 
@@ -272,4 +223,76 @@ void MainComponent::setFile(const File& f)
 		clip->setAutoPitch(false);
 		clip->setTimeStretchMode(te::TimeStretcher::defaultMode);
 	}
+}
+
+void MainComponent::deleteSelectedObj ()
+{
+    auto sel = selectionManager.getSelectedObject(0);
+    if (auto clip = dynamic_cast<te::Clip*> (sel))
+    {
+        clip->removeFromParentTrack();
+    }
+    else if (auto track = dynamic_cast<te::Track*> (sel))
+    {
+        if (!(track->isMarkerTrack() || track->isTempoTrack() || track->isChordTrack()))
+            edit->deleteTrack(track);
+    }
+    else if (auto plugin = dynamic_cast<te::Plugin*> (sel))
+    {
+        plugin->deleteFromParent();
+    }
+}
+
+void MainComponent::saveAsWav ()
+{
+    FileChooser chooser{ "enter file name to render..."
+        , engine.getPropertyStorage().getDefaultLoadSaveDirectory("MyDir")
+        , engine.getAudioFileFormatManager().readFormatManager.getWildcardForAllFormats()};
+    if (chooser.browseForFileToSave(true))
+    {
+        File file = chooser.getResult();
+        BigInteger tracksToDo;
+        int trackID = 0;
+        for (const auto& t : te::getAllTracks(*edit))
+            tracksToDo.setBit(trackID++);
+
+        te::EditTimeRange edrange{ 0.0, edit->getLength() };
+
+        if (te::Renderer::renderToFile("My Render Task", file, *edit, edrange, tracksToDo, true, {}, false))
+            DBG("render successed!!");
+        else
+            DBG("render failed...");
+    }
+}
+
+void MainComponent::showPlugins ()
+{
+    DialogWindow::LaunchOptions o;
+    o.dialogTitle = TRANS("Plugins");
+    o.dialogBackgroundColour = Colours::black;
+    o.escapeKeyTriggersCloseButton = true;
+    o.useNativeTitleBar = true;
+    o.resizable = true;
+    o.useBottomRightCornerResizer = true;
+
+    auto v = new PluginListComponent(engine.getPluginManager().pluginFormatManager,
+        engine.getPluginManager().knownPluginList,
+        engine.getTemporaryFileManager().getTempFile("PluginScanDeadMansPedal"),
+        te::getApplicationSettings());
+    v->setSize(800, 600);
+    o.content.setOwned(v);
+    o.launchAsync();
+}
+
+void MainComponent::newEdit ()
+{
+    createOrLoadEdit();
+
+    auto xmlName = File::getSpecialLocation(File::userDesktopDirectory).getFullPathName() + "\\edit.xml";
+    //DBG(xmlName);
+    File xmlFile(xmlName);
+
+    auto state = edit->state;
+    std::unique_ptr<juce::XmlElement> xml(state.createXml());
+    xml->writeTo(xmlFile);
 }

@@ -9,6 +9,7 @@
 namespace te = tracktion_engine;
 
 class MainComponent : public Component,
+    public MenuBarModel,
 	private ChangeListener
 {
 public:
@@ -20,6 +21,16 @@ public:
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
+    StringArray getMenuBarNames() override
+    {
+        return { "File", "Edit", "Option" };
+    }
+
+    PopupMenu getMenuForIndex (int menuIndex, const String& /*menuName*/) override;
+
+    void menuItemSelected (int /*menuItemID*/, int /*topLevelMenuIndex*/) override {}
+    void menuBarActivated (bool) override {}
+
 private:
 	te::Engine engine{ ProjectInfo::projectName, std::make_unique<ExtendedUIBehaviour>(), nullptr };
 	te::SelectionManager selectionManager{ engine };
@@ -27,17 +38,10 @@ private:
 	std::unique_ptr<EditComponent> editComponent;
 
 	juce::UndoManager undoManager;
+    ApplicationCommandManager commandManager;
 
-	juce::TextButton settingsButton{ "Settings" },
-		saveButton{ "Save" },
-		undoButton{ "Undo" },
-		redoButton{ "Redo" },
-		pluginsButton{ "Plugins" },
-		newTrackButton{ "New Track" },
-		newAudioClipButton{ "New Audio Clip" },
-		playPauseButton{ "Play" },
+	juce::TextButton playPauseButton{ "Play" },
 		newEditButton{ "New Edit" },
-		showEditButton{ "Show Edit" },
 		deleteButton{ "Delete" };
 
 	juce::Label editNameLabel{ "No Edit Loaded" };
@@ -55,6 +59,14 @@ private:
 	void changeListenerCallback(ChangeBroadcaster* source) override;
 
 	void setFile(const File&);
+
+    void deleteSelectedObj();
+
+    void saveAsWav();
+
+    void showPlugins();
+
+    void newEdit();
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };
