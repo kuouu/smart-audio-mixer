@@ -17,6 +17,7 @@ EditComponent::EditComponent (te::Edit& e, te::SelectionManager& sm)
     editViewState.selectionManager.addChangeListener (this);
     
     addAndMakeVisible (playhead);
+    addAndMakeVisible (timebar);
     
     markAndUpdate (updateTracks);
 }
@@ -85,9 +86,10 @@ void EditComponent::resized()
     const int headerWidth = editViewState.showHeaders ? 150 : 0;
     const int footerWidth = editViewState.showFooters ? 150 : 0;
     
+    timebar.setBounds(getLocalBounds());
     playhead.setBounds (getLocalBounds().withTrimmedLeft (headerWidth).withTrimmedRight (footerWidth));
     
-    int y = roundToInt (editViewState.viewY.get());
+    int y = roundToInt (editViewState.viewY.get()) + trackHeight + trackGap;
     for (int i = 0; i < jmin (headers.size(), tracks.size()); i++)
     {
         auto h = headers[i];
@@ -157,4 +159,22 @@ void EditComponent::buildTracks()
     
     playhead.toFront (false);
     resized();
+}
+
+// zoom event
+void EditComponent::mouseMagnify (const MouseEvent& e, float scaleFactor)
+{
+    editViewState.viewX2 = editViewState.viewX2.get() * (1 / scaleFactor);
+    timebar.repaint();
+}
+
+void EditComponent::mouseWheelMove (const MouseEvent& e, const MouseWheelDetails& wheel)
+{
+    editViewState.setScrollX(wheel.deltaX * 5);
+    // tracks
+    for (auto t : tracks) {
+        t->resized();
+    }
+    // playhead
+    playhead.repaint();
 }

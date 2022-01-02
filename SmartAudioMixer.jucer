@@ -63,12 +63,14 @@
               resource="0" file="Source/UI/AudioProcessorEditorContentComp.h"/>
         <FILE id="jNn0IL" name="AudioProcessorEditorContentComp.cpp" compile="1"
               resource="0" file="Source/UI/AudioProcessorEditorContentComp.cpp"/>
+        <FILE id="pm3lNg" name="TimeBar.cpp" compile="1" resource="0" file="Source/UI/TimeBar.cpp"/>
+        <FILE id="oLoCZL" name="TimeBar.h" compile="0" resource="0" file="Source/UI/TimeBar.h"/>
       </GROUP>
       <FILE id="Cwc7cR" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="ixk17W" name="Utilities.h" compile="0" resource="0" file="Source/Utilities.h"/>
     </GROUP>
   </MAINGROUP>
-  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_PLUGINHOST_VST3="1" JUCE_PLUGINHOST_AU="1"/>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>

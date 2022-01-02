@@ -96,12 +96,13 @@ void TrackComponent::handleAsyncUpdate()
 
 void TrackComponent::resized()
 {
+    auto scrollX = editViewState.scrollX.get();
     for (auto cc : clips)
     {
         auto& c = cc->getClip();
         auto pos = c.getPosition();
-        int x1 = editViewState.timeToX (pos.getStart(), getWidth());
-        int x2 = editViewState.timeToX (pos.getEnd(), getWidth());
+        int x1 = editViewState.timeToX (pos.getStart() + scrollX, getWidth());
+        int x2 = editViewState.timeToX (pos.getEnd() + scrollX, getWidth());
         
         cc->setBounds (x1, 0, x2 - x1, getHeight());
     }
