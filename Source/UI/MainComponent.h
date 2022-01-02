@@ -10,16 +10,16 @@ namespace te = tracktion_engine;
 
 class MainComponent : public Component,
     public MenuBarModel,
-	private ChangeListener
+    private ChangeListener
 {
 public:
-	//==============================================================================
-	MainComponent();
-	~MainComponent() override;
+    //==============================================================================
+    MainComponent();
+    ~MainComponent() override;
 
-	//==============================================================================
-	void paint(juce::Graphics&) override;
-	void resized() override;
+    //==============================================================================
+    void paint(juce::Graphics&) override;
+    void resized() override;
 
     StringArray getMenuBarNames() override
     {
@@ -32,35 +32,35 @@ public:
     void menuBarActivated (bool) override {}
 
 private:
-	te::Engine engine{ ProjectInfo::projectName, std::make_unique<ExtendedUIBehaviour>(), nullptr };
-	te::SelectionManager selectionManager{ engine };
-	std::unique_ptr<te::Edit> edit;
-	std::unique_ptr<EditComponent> editComponent;
+    te::Engine engine{ ProjectInfo::projectName, std::make_unique<ExtendedUIBehaviour>(), nullptr };
+    te::SelectionManager selectionManager{ engine };
+    std::unique_ptr<te::Edit> edit;
+    std::unique_ptr<EditComponent> editComponent;
 
-	juce::UndoManager undoManager;
+    juce::UndoManager undoManager;
     ApplicationCommandManager commandManager;
 
-	juce::TextButton playPauseButton{ "Play" },
-		newEditButton{ "New Edit" },
-		deleteButton{ "Delete" };
+    juce::TextButton playPauseButton{ "Play" },
+        newEditButton{ "New Edit" },
+        deleteButton{ "Delete" };
 
-	juce::Label editNameLabel{ "No Edit Loaded" };
+    juce::Label editNameLabel{ "No Edit Loaded" };
 
-	juce::ToggleButton showWaveformButton{ "Show Waveforms" };
+    juce::ToggleButton showWaveformButton{ "Show Waveforms" };
 
     std::unique_ptr<MenuBarComponent> menuBar;
 
-	void setupButtons();
+    void setupButtons();
 
-	void updatePlayButtonText();
+    void updatePlayButtonText();
 
-	void createOrLoadEdit(File editFile = {});
+    void createOrLoadEdit(File editFile = {});
 
-	void enableAllInputs();
+    void enableAllInputs();
 
-	void changeListenerCallback(ChangeBroadcaster* source) override;
+    void changeListenerCallback(ChangeBroadcaster* source) override;
 
-	void setFile(const File&);
+    void setFile(const File&);
 
     void deleteSelectedObj();
 
@@ -70,5 +70,5 @@ private:
 
     void newEdit();
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

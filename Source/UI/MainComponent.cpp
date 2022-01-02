@@ -9,32 +9,32 @@ MainComponent::MainComponent()
     menuBar.reset (new MenuBarComponent (this));
     addAndMakeVisible (menuBar.get());
 
-	updatePlayButtonText();
-	editNameLabel.setJustificationType(Justification::centred);
-	Helpers::addAndMakeVisible(*this, { &playPauseButton, &deleteButton, &editNameLabel, &showWaveformButton });
+    updatePlayButtonText();
+    editNameLabel.setJustificationType(Justification::centred);
+    Helpers::addAndMakeVisible(*this, { &playPauseButton, &deleteButton, &editNameLabel, &showWaveformButton });
 
-	deleteButton.setEnabled(false);
+    deleteButton.setEnabled(false);
 
-	auto d = File::getSpecialLocation(File::userDesktopDirectory).getChildFile("saved");
-	d.createDirectory();
+    auto d = File::getSpecialLocation(File::userDesktopDirectory).getChildFile("saved");
+    d.createDirectory();
 
-	auto f = Helpers::findRecentEdit(d);
-	if (f.existsAsFile())
-		createOrLoadEdit(f);
-	else
-		createOrLoadEdit(d.getNonexistentChildFile("Test", ".tracktionedit", false));
+    auto f = Helpers::findRecentEdit(d);
+    if (f.existsAsFile())
+        createOrLoadEdit(f);
+    else
+        createOrLoadEdit(d.getNonexistentChildFile("Test", ".tracktionedit", false));
 
-	selectionManager.addChangeListener(this);
+    selectionManager.addChangeListener(this);
 
-	setupButtons();
+    setupButtons();
 
-	setSize(600, 400);
+    setSize(600, 400);
 }
 
 MainComponent::~MainComponent()
 {
-	te::EditFileOperations(*edit).save(true, true, false);
-	engine.getTemporaryFileManager().getTempDirectory().deleteRecursively();
+    te::EditFileOperations(*edit).save(true, true, false);
+    engine.getTemporaryFileManager().getTempDirectory().deleteRecursively();
     #if JUCE_MAC
         MenuBarModel::setMacMainMenu (nullptr);
     #endif
@@ -43,19 +43,19 @@ MainComponent::~MainComponent()
 //==============================================================================
 void MainComponent::paint(juce::Graphics& g)
 {
-	g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
+    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 }
 
 void MainComponent::resized()
 {
-	auto r = getLocalBounds();
+    auto r = getLocalBounds();
     menuBar->setBounds (
         r.removeFromTop (
             LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight()
         )
     );
-	int w = r.getWidth() / 3;
-	auto topR = r.removeFromTop(40);
+    int w = r.getWidth() / 3;
+    auto topR = r.removeFromTop(40);
     juce::FlexBox fb;
     fb.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
     fb.alignContent = juce::FlexBox::AlignContent::center;  
@@ -66,11 +66,11 @@ void MainComponent::resized()
     } );
     fb.performLayout(topR.reduced(2));
 
-	topR = r.removeFromTop(32);
-	editNameLabel.setBounds(topR);
+    topR = r.removeFromTop(32);
+    editNameLabel.setBounds(topR);
 
-	if (editComponent != nullptr)
-		editComponent->setBounds(r);
+    if (editComponent != nullptr)
+        editComponent->setBounds(r);
 }
 
 PopupMenu MainComponent::getMenuForIndex (int menuIndex, const String& /*menuName*/)
@@ -93,7 +93,7 @@ PopupMenu MainComponent::getMenuForIndex (int menuIndex, const String& /*menuNam
         menu.addSeparator();
         menu.addItem ("Show Project Path", [this]{
             auto d = File::getSpecialLocation(File::userDesktopDirectory).getChildFile("saved");
-	        d.createDirectory();
+            d.createDirectory();
             auto f = Helpers::findRecentEdit(d);
             if (f.existsAsFile()) f.revealToUser();
         });
@@ -120,110 +120,110 @@ PopupMenu MainComponent::getMenuForIndex (int menuIndex, const String& /*menuNam
 
 void  MainComponent::setupButtons()
 {
-	playPauseButton.onClick = [this]
-	{
-		EngineHelpers::togglePlay(*edit);
-	};
-	deleteButton.onClick = [this]
-	{
-		deleteSelectedObj();
-	};
-	showWaveformButton.onClick = [this]
-	{
-		auto& evs = editComponent->getEditViewState();
-		evs.drawWaveforms = !evs.drawWaveforms.get();
-		showWaveformButton.setToggleState(evs.drawWaveforms, dontSendNotification);
-	};
+    playPauseButton.onClick = [this]
+    {
+        EngineHelpers::togglePlay(*edit);
+    };
+    deleteButton.onClick = [this]
+    {
+        deleteSelectedObj();
+    };
+    showWaveformButton.onClick = [this]
+    {
+        auto& evs = editComponent->getEditViewState();
+        evs.drawWaveforms = !evs.drawWaveforms.get();
+        showWaveformButton.setToggleState(evs.drawWaveforms, dontSendNotification);
+    };
 }
 
 
 void MainComponent::updatePlayButtonText()
 {
-	if (edit != nullptr)
-		playPauseButton.setButtonText(edit->getTransport().isPlaying() ? "Stop" : "Play");
+    if (edit != nullptr)
+        playPauseButton.setButtonText(edit->getTransport().isPlaying() ? "Stop" : "Play");
 }
 
 void MainComponent::createOrLoadEdit(File editFile)
 {
-	if (editFile == File())
-	{
-		FileChooser fc("New Edit", File::getSpecialLocation(File::userDesktopDirectory), "*.tracktionedit");
-		if (fc.browseForFileToSave(true))
-			editFile = fc.getResult();
-		else
-			return;
-	}
+    if (editFile == File())
+    {
+        FileChooser fc("New Edit", File::getSpecialLocation(File::userDesktopDirectory), "*.tracktionedit");
+        if (fc.browseForFileToSave(true))
+            editFile = fc.getResult();
+        else
+            return;
+    }
 
-	selectionManager.deselectAll();
-	editComponent = nullptr;
+    selectionManager.deselectAll();
+    editComponent = nullptr;
 
-	if (editFile.existsAsFile())
-		edit = te::loadEditFromFile(engine, editFile);
-	else
-		edit = te::createEmptyEdit(engine, editFile);
+    if (editFile.existsAsFile())
+        edit = te::loadEditFromFile(engine, editFile);
+    else
+        edit = te::createEmptyEdit(engine, editFile);
 
-	edit->playInStopEnabled = true;
+    edit->playInStopEnabled = true;
 
-	auto& transport = edit->getTransport();
-	transport.addChangeListener(this);
+    auto& transport = edit->getTransport();
+    transport.addChangeListener(this);
 
-	editNameLabel.setText(editFile.getFileNameWithoutExtension(), dontSendNotification);
+    editNameLabel.setText(editFile.getFileNameWithoutExtension(), dontSendNotification);
 
-	te::EditFileOperations(*edit).save(true, true, false);
+    te::EditFileOperations(*edit).save(true, true, false);
 
-	enableAllInputs();
+    enableAllInputs();
 
-	editComponent = std::make_unique<EditComponent>(*edit, selectionManager);
-	editComponent->getEditViewState().showFooters = true;
-	editComponent->getEditViewState().showMidiDevices = true;
-	editComponent->getEditViewState().showWaveDevices = true;
+    editComponent = std::make_unique<EditComponent>(*edit, selectionManager);
+    editComponent->getEditViewState().showFooters = true;
+    editComponent->getEditViewState().showMidiDevices = true;
+    editComponent->getEditViewState().showWaveDevices = true;
 
-	addAndMakeVisible(*editComponent);
+    addAndMakeVisible(*editComponent);
     resized();
 }
 
 void MainComponent::enableAllInputs()
 {
-	auto& dm = engine.getDeviceManager();
+    auto& dm = engine.getDeviceManager();
 
-	for (int i = 0; i < dm.getNumMidiInDevices(); i++)
-	{
-		if (auto mip = dm.getMidiInDevice(i))
-		{
-			mip->setEndToEndEnabled(true);
-			mip->setEnabled(true);
-		}
-	}
+    for (int i = 0; i < dm.getNumMidiInDevices(); i++)
+    {
+        if (auto mip = dm.getMidiInDevice(i))
+        {
+            mip->setEndToEndEnabled(true);
+            mip->setEnabled(true);
+        }
+    }
 
-	for (int i = 0; i < dm.getNumWaveInDevices(); i++)
-		if (auto wip = dm.getWaveInDevice(i))
-			wip->setStereoPair(false);
+    for (int i = 0; i < dm.getNumWaveInDevices(); i++)
+        if (auto wip = dm.getWaveInDevice(i))
+            wip->setStereoPair(false);
 
-	for (int i = 0; i < dm.getNumWaveInDevices(); i++)
-	{
-		if (auto wip = dm.getWaveInDevice(i))
-		{
-			wip->setEndToEnd(true);
-			wip->setEnabled(true);
-		}
-	}
+    for (int i = 0; i < dm.getNumWaveInDevices(); i++)
+    {
+        if (auto wip = dm.getWaveInDevice(i))
+        {
+            wip->setEndToEnd(true);
+            wip->setEnabled(true);
+        }
+    }
 
-	edit->getTransport().ensureContextAllocated();
+    edit->getTransport().ensureContextAllocated();
 }
 
 void MainComponent::changeListenerCallback(ChangeBroadcaster* source)
 {
-	if (edit != nullptr && source == &edit->getTransport())
-	{
-		updatePlayButtonText();
-	}
-	else if (source == &selectionManager)
-	{
-		auto sel = selectionManager.getSelectedObject(0);
-		deleteButton.setEnabled(dynamic_cast<te::Clip*> (sel) != nullptr
-			|| dynamic_cast<te::Track*> (sel) != nullptr
-			|| dynamic_cast<te::Plugin*> (sel));
-	}
+    if (edit != nullptr && source == &edit->getTransport())
+    {
+        updatePlayButtonText();
+    }
+    else if (source == &selectionManager)
+    {
+        auto sel = selectionManager.getSelectedObject(0);
+        deleteButton.setEnabled(dynamic_cast<te::Clip*> (sel) != nullptr
+            || dynamic_cast<te::Track*> (sel) != nullptr
+            || dynamic_cast<te::Plugin*> (sel));
+    }
 }
 
 void MainComponent::setFile(const File& f)
@@ -231,12 +231,12 @@ void MainComponent::setFile(const File& f)
     auto sel = selectionManager.getSelectedObject(0);
     auto track = dynamic_cast<te::AudioTrack*> (sel);
     auto trackNum = track ? track->getAudioTrackNumber() : 0;
-	if (auto clip = EngineHelpers::loadAudioFileAsClip(*edit, f, trackNum))
-	{
-		clip->setAutoTempo(false);
-		clip->setAutoPitch(false);
-		clip->setTimeStretchMode(te::TimeStretcher::defaultMode);
-	}
+    if (auto clip = EngineHelpers::loadAudioFileAsClip(*edit, f, trackNum))
+    {
+        clip->setAutoTempo(false);
+        clip->setAutoPitch(false);
+        clip->setTimeStretchMode(te::TimeStretcher::defaultMode);
+    }
 }
 
 void MainComponent::deleteSelectedObj ()
