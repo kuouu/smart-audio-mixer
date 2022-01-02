@@ -48,6 +48,8 @@ private:
 
 	juce::ToggleButton showWaveformButton{ "Show Waveforms" };
 
+    std::unique_ptr<MenuBarComponent> menuBar;
+
 	void setupButtons();
 
 	void updatePlayButtonText();

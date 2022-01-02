@@ -6,6 +6,8 @@ MainComponent::MainComponent()
     #if JUCE_MAC
         MenuBarModel::setMacMainMenu (this);
     #endif
+    menuBar.reset (new MenuBarComponent (this));
+    addAndMakeVisible (menuBar.get());
 
 	updatePlayButtonText();
 	editNameLabel.setJustificationType(Justification::centred);
@@ -46,8 +48,12 @@ void MainComponent::paint(juce::Graphics& g)
 
 void MainComponent::resized()
 {
-
 	auto r = getLocalBounds();
+    menuBar->setBounds (
+        r.removeFromTop (
+            LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight()
+        )
+    );
 	int w = r.getWidth() / 3;
 	auto topR = r.removeFromTop(40);
     juce::FlexBox fb;
