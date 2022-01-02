@@ -20,16 +20,8 @@ void TimeBar::paint (Graphics& g)
     const int trackHeight = 50, trackGap = 2;
     const int headerWidth = editViewState.showHeaders ? 150 : 0;
     const int footerWidth = editViewState.showFooters ? 150 : 0;
-    // header
-    g.setColour (Colours::green);
-    g.drawRect (0, 0, headerWidth - trackGap, trackHeight);
-    // body
-    g.setColour (Colours::blue);
-    g.drawRect (headerWidth, 0, getWidth() - headerWidth - footerWidth, trackHeight);
+    
     drawLabels(g);
-    // footer
-    g.setColour (Colours::orange);
-    g.drawRect (getWidth() - footerWidth + trackGap, 0, footerWidth - trackGap, trackHeight);
 }
 
 void TimeBar::drawLabels (Graphics& g)
@@ -41,7 +33,7 @@ void TimeBar::drawLabels (Graphics& g)
     double scrollX = editViewState.scrollX.get();
     double offset = editViewState.timeToX(scrollX, width);
     int zoomedInterval = interval;
-    while(zoomedInterval < 40) zoomedInterval *= 2;
+    while(zoomedInterval < 30) zoomedInterval *= 5;
     for (int xLabel = headerWidth + offset
          ; xLabel < getWidth() - footerWidth
          ; xLabel += zoomedInterval){
