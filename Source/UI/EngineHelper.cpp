@@ -39,6 +39,24 @@ namespace EngineHelpers
         });
     }
 
+    void browseForEditFile(tracktion_engine::Engine& engine, std::function<void(const juce::File&)> fileChosenCallback)
+    {
+        auto fc = std::make_shared<juce::FileChooser>("Please select an .tracktionedit file to load...",
+            File::getSpecialLocation (File::userDesktopDirectory),
+            "*.tracktionedit");
+
+        fc->launchAsync(juce::FileBrowserComponent::openMode + juce::FileBrowserComponent::canSelectFiles,
+            [fc, &engine, callback = std::move(fileChosenCallback)](const juce::FileChooser&)
+        {
+            const auto f = fc->getResult();
+
+            if (f.existsAsFile())
+                engine.getPropertyStorage().setDefaultLoadSaveDirectory("pitchAndTimeExample", f.getParentDirectory());
+
+            callback(f);
+        });
+    }
+
     void removeAllClips(tracktion_engine::AudioTrack& track)
     {
         auto clips = track.getClips();
@@ -50,13 +68,13 @@ namespace EngineHelpers
     tracktion_engine::AudioTrack* getOrInsertAudioTrackAt(tracktion_engine::Edit& edit, int index)
     {
         edit.ensureNumberOfAudioTracks(index + 1);
-        return tracktion_engine::getAudioTracks(edit)[index];
+        return tracktion_engine::getAudioTracks(edit)[index-1];
     }
 
-    tracktion_engine::WaveAudioClip::Ptr loadAudioFileAsClip(tracktion_engine::Edit& edit, const juce::File& file)
+    tracktion_engine::WaveAudioClip::Ptr loadAudioFileAsClip(tracktion_engine::Edit& edit, const juce::File& file, int n)
     {
         // Find the first track and delete all clips from it
-        if (auto track = getOrInsertAudioTrackAt(edit, 0))
+        if (auto track = getOrInsertAudioTrackAt(edit, n))
         {
             removeAllClips(*track);
 
