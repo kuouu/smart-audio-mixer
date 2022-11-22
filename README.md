@@ -13,7 +13,7 @@
     ·
     <a href="https://github.com/kuouu/smart-audio-mixer/issues">Report Bug</a>
     ·
-    <a href="https://github.com/kuouu/smart-audio-mixer/pulls">Request Feature</a>
+    <a href="https://github.com/kuouu/smart-audio-mixer/issues">Request Feature</a>
   </p>
 </div>
 
@@ -76,4 +76,4 @@ Contributions are what make the open source community such an amazing place to l
 
 About me: [Yu-Tsung (Eric) Kuo](https://www.linkedin.com/in/kuouu/) - erickuo5124@gmail.com
 
-Project Link: [https://github.com/kuouu/smart-room-frontend](https://github.com/kuouu/smart-room-frontend)
+Project Link: [https://github.com/kuouu/smart-audio-mixer](https://github.com/kuouu/smart-audio-mixer)
